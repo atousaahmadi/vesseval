@@ -86,6 +86,8 @@ class DisplayImageState(HigherOrderState):
         self, image_state: ImageState, scale_state: FloatState
     ) -> ImageState:
         scale = scale_state.value
+        if image_state.value is None or image_state.value.size == 0:
+            return ImageState(np.zeros((1, 1, 3), np.uint8))
         return ImageState(
             cv.resize(
                 image_state.value,
