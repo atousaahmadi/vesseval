@@ -82,7 +82,6 @@ class MenuTools(tk.Menu):
         self.add_command(label="Equalize Histogram", command=self.equalize_hist)
 
     def eval(self):
-        import csv
         import os
         import openpyxl
         table = app_state.eval_regions()
@@ -102,14 +101,6 @@ class MenuTools(tk.Menu):
         filename = app_state.filename.value
         if filename:
             base = os.path.splitext(filename)[0]
-
-            csv_path = base + ".csv"
-            with open(csv_path, "w", newline="") as f:
-                writer = csv.DictWriter(f, fieldnames=table.keys())
-                writer.writeheader()
-                for i in range(len(table["filename"])):
-                    writer.writerow({k: table[k][i] for k in table.keys()})
-            print(f"Saved CSV: {csv_path}")
 
             xlsx_path = base + ".xlsx"
             wb = openpyxl.Workbook()
