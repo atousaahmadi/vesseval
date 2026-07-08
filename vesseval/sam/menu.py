@@ -82,8 +82,6 @@ class MenuTools(tk.Menu):
         self.add_command(label="Equalize Histogram", command=self.equalize_hist)
 
     def eval(self):
-    import csv
-    import os
     table = app_state.eval_regions()
 
     rows = []
@@ -97,16 +95,6 @@ class MenuTools(tk.Menu):
 
     self.clipboard_clear()
     self.clipboard_append(txt)
-
-    filename = app_state.filename.value
-    if filename:
-        csv_path = os.path.splitext(filename)[0] + ".csv"
-        with open(csv_path, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=table.keys())
-            writer.writeheader()
-            for i in range(len(table["filename"])):
-                writer.writerow({k: table[k][i] for k in table.keys()})
-        print(f"Saved to: {csv_path}")
 
     def normalize(self):
         _img = cv.cvtColor(app_state.original_image.value, cv.COLOR_BGR2GRAY)
