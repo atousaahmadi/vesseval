@@ -101,38 +101,39 @@ class RegionState(HigherOrderState):
     def update_contour(self):
         if self._skip_update:
             return
+
         input_points = [
-        self.foreground_point.values(),
-        *map(lambda pt: pt.values(), self.background_points),
-    ]
-    input_labels = [1, *([0] * len(self.background_points))]
-    if self.foreground_point.x.value == UNUSED_VALUE:
-        input_points.pop(0)
-        input_labels.pop(0)
+            self.foreground_point.values(),
+            *map(lambda pt: pt.values(), self.background_points),
+        ]
+        input_labels = [1, *([0] * len(self.background_points))]
+        if self.foreground_point.x.value == UNUSED_VALUE:
+            input_points.pop(0)
+            input_labels.pop(0)
 
-    input_points = np.array(input_points) if len(input_points) > 0 else None
-    input_labels = np.array(input_labels) if input_points is not None else None
+        input_points = np.array(input_points) if len(input_points) > 0 else None
+        input_labels = np.array(input_labels) if input_points is not None else None
 
-    if self.foreground_box.x1.value == UNUSED_VALUE:
-        input_box = None
-    else:
-        input_box = np.array([self.foreground_box.tlbr()])
+        if self.foreground_box.x1.value == UNUSED_VALUE:
+            input_box = None
+        else:
+            input_box = np.array([self.foreground_box.tlbr()])
 
-    if input_points is None and input_box is None:
-        return
+        if input_points is None and input_box is None:
+            return
 
-    cnt = IMAGE_PREDICTOR.predict_as_contour(
-        point_coords=input_points,
-        point_labels=input_labels,
-        box=input_box,
-    )
+        cnt = IMAGE_PREDICTOR.predict_as_contour(
+            point_coords=input_points,
+            point_labels=input_labels,
+            box=input_box,
+        )
 
-    if cnt is None:
-        return
+        if cnt is None:
+            return
 
-    with self.contour:
-        self.contour.clear()
-        self.contour.extend(ContourState.from_numpy(cnt))
+        with self.contour:
+            self.contour.clear()
+            self.contour.extend(ContourState.from_numpy(cnt))
 
     def deserialize(self, data):
         self._skip_update = True
