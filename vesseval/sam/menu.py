@@ -84,6 +84,7 @@ class MenuTools(tk.Menu):
     def eval(self):
         import os
         import openpyxl
+        from datetime import datetime
         table = app_state.eval_regions()
 
         rows = []
@@ -101,8 +102,9 @@ class MenuTools(tk.Menu):
         filename = app_state.filename.value
         if filename:
             base = os.path.splitext(filename)[0]
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-            xlsx_path = base + ".xlsx"
+            xlsx_path = f"{base}_{timestamp}.xlsx"
             wb = openpyxl.Workbook()
             ws = wb.active
             ws.append(list(table.keys()))
