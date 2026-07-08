@@ -102,9 +102,6 @@ class RegionState(HigherOrderState):
         if self._skip_update:
             return
 
-        with self.contour:
-            self.contour.clear()
-
             input_points = [
                 self.foreground_point.values(),
                 *map(lambda pt: pt.values(), self.background_points),
