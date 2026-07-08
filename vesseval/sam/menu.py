@@ -82,32 +82,43 @@ class MenuTools(tk.Menu):
         self.add_command(label="Equalize Histogram", command=self.equalize_hist)
 
     def eval(self):
-    import csv
-    import os
-    table = app_state.eval_regions()
+        import csv
+        import os
+        import openpyxl
+        table = app_state.eval_regions()
 
-    rows = []
-    for i in range(len(table["filename"])):
-        row = list(map(lambda key: str(table[key][i]), table.keys()))
-        rows.append("\t".join(row))
-    txt = "\n".join(rows)
-    print("\t".join(list(table.keys())))
-    print(txt)
-    print()
+        rows = []
+        for i in range(len(table["filename"])):
+            row = list(map(lambda key: str(table[key][i]), table.keys()))
+            rows.append("\t".join(row))
+        txt = "\n".join(rows)
+        print("\t".join(list(table.keys())))
+        print(txt)
+        print()
 
-    self.clipboard_clear()
-    self.clipboard_append(txt)
+        self.clipboard_clear()
+        self.clipboard_append(txt)
 
-    
-    filename = app_state.filename.value
-    if filename:
-        csv_path = os.path.splitext(filename)[0] + ".csv"
-        with open(csv_path, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=table.keys())
-            writer.writeheader()
+        filename = app_state.filename.value
+        if filename:
+            base = os.path.splitext(filename)[0]
+
+            csv_path = base + ".csv"
+            with open(csv_path, "w", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=table.keys())
+                writer.writeheader()
+                for i in range(len(table["filename"])):
+                    writer.writerow({k: table[k][i] for k in table.keys()})
+            print(f"Saved CSV: {csv_path}")
+
+            xlsx_path = base + ".xlsx"
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.append(list(table.keys()))
             for i in range(len(table["filename"])):
-                writer.writerow({k: table[k][i] for k in table.keys()})
-        print(f"Saved to: {csv_path}")
+                ws.append([table[k][i] for k in table.keys()])
+            wb.save(xlsx_path)
+            print(f"Saved XLSX: {xlsx_path}")
 
     def normalize(self):
         _img = cv.cvtColor(app_state.original_image.value, cv.COLOR_BGR2GRAY)
