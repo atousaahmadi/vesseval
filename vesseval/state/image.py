@@ -72,6 +72,10 @@ class DisplayImageState(HigherOrderState):
         width, height = resolution_state.values()
         shape = image_state.value.shape
 
+        if shape[0] == 0 or shape[1] == 0:
+            return FloatState(1.0)
+
+        
         scale_x = width / shape[1]
         scale_y = height / shape[0]
         scale = min(scale_x, scale_y)
