@@ -82,19 +82,31 @@ class MenuTools(tk.Menu):
         self.add_command(label="Equalize Histogram", command=self.equalize_hist)
 
     def eval(self):
-        table = app_state.eval_regions()
+    import csv
+    import os
+    table = app_state.eval_regions()
 
-        rows = []
-        for i in range(len(table["filename"])):
-            row = list(map(lambda key: str(table[key][i]), table.keys()))
-            rows.append("\t".join(row))
-        txt = "\n".join(rows)
-        print("\t".join(list(table.keys())))
-        print(txt)
-        print()
+    rows = []
+    for i in range(len(table["filename"])):
+        row = list(map(lambda key: str(table[key][i]), table.keys()))
+        rows.append("\t".join(row))
+    txt = "\n".join(rows)
+    print("\t".join(list(table.keys())))
+    print(txt)
+    print()
 
-        self.clipboard_clear()
-        self.clipboard_append(txt)
+    self.clipboard_clear()
+    self.clipboard_append(txt)
+
+    filename = app_state.filename.value
+    if filename:
+        csv_path = os.path.splitext(filename)[0] + ".csv"
+        with open(csv_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=table.keys())
+            writer.writeheader()
+            for i in range(len(table["filename"])):
+                writer.writerow({k: table[k][i] for k in table.keys()})
+        print(f"Saved to: {csv_path}")
 
     def normalize(self):
         _img = cv.cvtColor(app_state.original_image.value, cv.COLOR_BGR2GRAY)
