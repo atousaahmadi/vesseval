@@ -131,7 +131,12 @@ class RegionState(HigherOrderState):
                 box=input_box,
             )
 
-            self.contour.extend(ContourState.from_numpy(cnt))
+            if cnt is None:
+                return
+
+            with self.contour:
+                self.contour.clear()
+                self.contour.extend(ContourState.from_numpy(cnt))
 
     def deserialize(self, data):
         self._skip_update = True
