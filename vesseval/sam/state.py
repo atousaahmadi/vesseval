@@ -203,7 +203,7 @@ class AppState(HigherOrderState):
 
         # canvas resolution
         # this resolution determines the size of the displayed canvas/GUI
-        self.canvas_resolution = ResolutionState(1600, 900)
+        self.canvas_resolution = ResolutionState(1280, 900)
 
         # TODO: internal resolution must depend on the aspect ratio of the image
         self.image = self.resize_image(self.original_image, self.internal_resolution)
