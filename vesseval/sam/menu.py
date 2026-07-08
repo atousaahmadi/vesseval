@@ -98,7 +98,7 @@ class MenuTools(tk.Menu):
     self.clipboard_clear()
     self.clipboard_append(txt)
 
-    # Save to CSV file next to the image
+    
     filename = app_state.filename.value
     if filename:
         csv_path = os.path.splitext(filename)[0] + ".csv"
