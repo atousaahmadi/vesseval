@@ -116,10 +116,17 @@ class ImagePredictor:
         )
         mask = mask.astype(np.uint8)
         cnts, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+
+        if cnts is None or len(cnts) == 0:
+            return None
+
         areas = list(map(lambda cnt: cv.contourArea(cnt), cnts))
-        cnt = cnts[np.argmax(areas)]
-        cnt = cnt[:, 0, :]
-        return cnt
+
+        if len(areas) == 0 or max(areas) <= 0:
+            return None
+
+        cnt = cnts[int(np.argmax(areas))]
+        return cnt[:, 0, :]
 
     def predict_multiple_as_contour(
         self,
