@@ -20,7 +20,10 @@ class ContourState(ListState):
         return cls([PointState(*pt) for pt in contour])
 
     def to_numpy(self) -> NDArray[np.int64]:
-        return np.array([(pt.x.value, pt.y.value) for pt in self])
+        pts = [(pt.x.value, pt.y.value) for pt in self]
+        if len(pts) == 0:
+            return np.empty((0, 2), dtype=np.int64)
+        return np.array(pts, dtype=np.int64)
 
     def deserialize(self, points: List[Dict[str, int]]) -> None:
         with self:
