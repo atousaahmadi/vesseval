@@ -289,8 +289,8 @@ class AppState(HigherOrderState):
 
         for i, region in enumerate(self.regions):
             contour = region.contour.to_numpy()
-            if len(contour) == 0:
-                return colored_regions_image
+            if contour.ndim != 2 or contour.shape[0] == 0 or contour.shape[1] != 2:
+                continue
 
             color = COLOR_PALETTE[i % len(COLOR_PALETTE)]
 
@@ -377,6 +377,11 @@ class AppState(HigherOrderState):
         rows = []
 
         for i, contour in enumerate(contours, start=1):
+            contour = np.asarray(contour)
+
+            if contour.ndim != 2 or contour.shape[0] == 0 or contour.shape[1] != 2:
+                continue
+
             cut_off_min = (contour <= 0).any()
             cut_off_max_x = (
                 contour[:, 0].max() >= (self.image.value.shape[1] - 1)
@@ -387,7 +392,7 @@ class AppState(HigherOrderState):
             cut_off = cut_off_min or cut_off_max_x or cut_off_max_y
 
             contour[:, 0] = np.rint(contour[:, 0] * scale_x)
-            contour[:, 1] = np.rint(contour[:, 1] * scale_x)
+            contour[:, 1] = np.rint(contour[:, 1] * scale_y)
 
             label = 1
             label_img = np.zeros(
